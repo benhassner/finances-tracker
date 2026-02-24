@@ -1,6 +1,7 @@
 """
 Application configuration settings.
-All configuration is local-only. No external services, no telemetry.
+Supports both local development (SQLite) and production deployment (PostgreSQL).
+No external services, no telemetry.
 """
 import os
 from pathlib import Path
@@ -16,8 +17,13 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 MODEL_DIR.mkdir(parents=True, exist_ok=True)
 DB_DIR.mkdir(parents=True, exist_ok=True)
 
-# Database
-DATABASE_URL = f"sqlite:///{DB_DIR / 'finance.db'}"
+# Database configuration
+# Use DATABASE_URL environment variable for PostgreSQL in production
+# Falls back to SQLite for local development
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    f"sqlite:///{DB_DIR / 'finance.db'}"
+)
 
 # ML model paths
 TFIDF_VECTORIZER_PATH = MODEL_DIR / "tfidf_vectorizer.joblib"
@@ -26,17 +32,25 @@ CLASSIFIER_PATH = MODEL_DIR / "classifier.joblib"
 # Minimum labeled transactions needed to train/retrain the ML model
 MIN_TRAINING_SAMPLES = 30
 
-# CORS — only allow localhost origins
-ALLOWED_ORIGINS = [
+# CORS configuration
+# Allow localhost in development
+# Allow deployed frontend URL in production via FRONTEND_URL env var
+_default_origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
 
+_frontend_url = os.getenv("FRONTEND_URL")
+if _frontend_url:
+    _default_origins.append(_frontend_url)
+
+ALLOWED_ORIGINS = _default_origins
+
 # Subscription detection thresholds
 SUBSCRIPTION_MIN_OCCURRENCES = 2          # minimum repeats to flag
-SUBSCRIPTION_AMOUNT_TOLERANCE = 0.05      # 5 % variance allowed
+SUBSCRIPTION_AMOUNT_TOLERANCE = 0.05      # 5% variance allowed
 
 # Default categories seeded into the database
 DEFAULT_CATEGORIES = [

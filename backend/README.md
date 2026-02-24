@@ -1,15 +1,16 @@
 # Finance Tracker Backend
 
-Local-only personal finance tracking API built with FastAPI.
+Personal finance tracking API built with FastAPI. Supports both local development (SQLite) and production deployment (PostgreSQL).
 
 ## Features
 
-- **Privacy-first**: All data stored locally in SQLite
+- **Privacy-first**: All data stored locally or on your own database
+- **Flexible database**: SQLite for development, PostgreSQL for production
 - **CSV Import**: Supports Chase, Bank of America, Wells Fargo, and generic CSV formats
 - **Rule-based categorization**: Automatic categorization with customizable rules
 - **ML fallback**: Scikit-learn classifier for uncategorized transactions
 - **Analytics**: Dashboard metrics, projections, and subscription detection
-- **No external dependencies**: Runs completely offline
+- **Production-ready**: Configured for deployment on Render, Heroku, or similar platforms
 
 ## Setup
 
@@ -50,22 +51,65 @@ The API will be available at `http://127.0.0.1:8000`
 
 Tip: If port 8000 is blocked, pick a different port (e.g. 8010) and update the frontend proxy target in `frontend/vite.config.ts` accordingly.
 
+## Production Deployment
+
+The backend is configured for production deployment on Render, Heroku, or similar platforms.
+
+### Environment Variables
+
+Create a `.env` file (or set environment variables) with the following:
+
+```bash
+# PostgreSQL database URL (required for production)
+DATABASE_URL=postgresql://user:password@hostname:5432/database_name
+
+# Server configuration
+HOST=0.0.0.0                  # Bind to all interfaces for production
+PORT=8000                      # Render/Heroku sets this automatically
+
+# Frontend URL for CORS (required for production)
+FRONTEND_URL=https://yourdomain.com
+```
+
+See [.env.example](.env.example) for complete documentation.
+
+### Deploying to Render
+
+1. **Create PostgreSQL database** on Render
+2. **Create Web Service** on Render:
+   - Connect your GitHub repository
+   - Set **Build Command**: `pip install -r requirements.txt`
+   - Set **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+   - Set environment variables (DATABASE_URL, FRONTEND_URL, etc.)
+3. **Deploy** — Render automatically creates tables on first run
+
+### Database Migrations
+
+The app automatically creates tables on startup using SQLAlchemy's `create_all()`. No additional migration steps are required.
+
+To use PostgreSQL locally for testing:
+
+```bash
+# Install postgres locally or use Docker
+export DATABASE_URL=postgresql://user:password@localhost:5432/finances
+python -m uvicorn app.main:app --reload
+```
+
 ## API Documentation
 
-Once running, visit `http://127.0.0.1:8000/docs` for interactive API documentation.
+Once running, visit `http://localhost:8000/docs` for interactive API documentation.
 
 ## Data Storage
 
-- Database: `backend/data/db/finance.db`
-- ML Models: `backend/data/models/`
-
-All data stays on your local machine.
+- **Local Development**: SQLite database at `backend/data/db/finance.db`
+- **Production**: PostgreSQL database (configured via `DATABASE_URL`)
+- **ML Models**: `backend/data/models/`
 
 ## Security
 
-- CORS restricted to localhost origins only
-- No external API calls
-- No telemetry or data collection
+- **CORS**: Restricted to localhost origins (development) and configured frontend URL (production)
+- **No external API calls**: App runs completely offline or with your own database
+- **No telemetry**: No data collection or tracking
 
 ## 🚨 ERROR NOTES
 

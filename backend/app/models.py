@@ -1,6 +1,6 @@
 """
 SQLAlchemy ORM models for the finance tracker.
-All data is stored locally in SQLite.
+Compatible with both SQLite (local development) and PostgreSQL (production).
 """
 from datetime import datetime
 from sqlalchemy import (

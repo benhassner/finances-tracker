@@ -55,7 +55,7 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# CORS middleware — restrict to localhost only
+# CORS middleware — restrict origins to localhost (dev) and deployed frontend (production)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
