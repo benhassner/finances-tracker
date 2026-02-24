@@ -1,6 +1,7 @@
 """
 Database engine and session configuration.
-Supports both SQLite (local development) and PostgreSQL (production).
+Supports SQLite (local development) and PostgreSQL (production/Supabase).
+Optimized for connection pooling with Supabase's pgBouncer and serverless environments.
 """
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import declarative_base, sessionmaker
@@ -29,13 +30,20 @@ if is_sqlite:
         cursor.execute("PRAGMA synchronous=NORMAL")
         cursor.close()
 else:
-    # PostgreSQL configuration for production
-    # Use NullPool to work better with serverless/ephemeral environments like Render
+    # PostgreSQL configuration for production/Supabase
+    # Use NullPool for serverless/ephemeral environments (Render, Vercel, etc.)
+    # connect_args optimized for Supabase's pgBouncer connection pooler
     engine = create_engine(
         DATABASE_URL,
         poolclass=NullPool,
+        connect_args={
+            "connect_timeout": 10,
+            "application_name": "finances-tracker",
+        },
         echo=False,
     )
+
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

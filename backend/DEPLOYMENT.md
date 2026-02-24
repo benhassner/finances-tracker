@@ -52,6 +52,36 @@ Replace:
 - Render will automatically build and deploy
 - Click the service URL to verify it's running
 
+## Quick Start: Supabase + Render Deployment
+
+**Recommended:** Use Supabase for the database + Render for the backend service.
+
+### 1. Create a Supabase PostgreSQL Database
+
+1. Log in to [supabase.com](https://supabase.com)
+2. Create a new project
+3. Go to **Settings** → **Database**
+4. Copy the **Connection String** (URI format)
+   - Important: Use "Transaction Pool" for pgBouncer compatibility
+   - URL should look like: `postgresql://postgres:password@db.supabase.co:5432/postgres?sslmode=require`
+
+### 2. Create Render Web Service (same as above)
+
+Follow the Render steps above, but use your Supabase connection string as `DATABASE_URL`.
+
+### 3. Environment Variables on Render
+
+```
+DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@db.supabase.co:5432/postgres?sslmode=require
+HOST=0.0.0.0
+FRONTEND_URL=https://your-frontend-domain.com
+```
+
+**Key differences from Render PostgreSQL:**
+- Supabase connection string includes `?sslmode=require` for secure connections
+- pgBouncer connection pooling is automatically handled
+- No need to manage your own database backups (Supabase handles it)
+
 ## Environment Variables Reference
 
 | Variable | Purpose | Example |
@@ -151,6 +181,22 @@ The code automatically detects the database type:
 For Render-specific help:
 - [Render Docs](https://render.com/docs)
 - [PostgreSQL on Render](https://render.com/docs/databases)
+
+For Supabase-specific help:
+- [Supabase Docs](https://supabase.com/docs)
+- [Connection Pooling Guide](https://supabase.com/docs/guides/database/connecting-to-postgres#connection-pooler)
+
+## Technical Details: Connection Pooling and NullPool
+
+The app uses **NullPool** for production PostgreSQL connections. This configuration:
+
+1. **Eliminates connection pooling at the application level** - Better for serverless/ephemeral environments
+2. **Works seamlessly with Supabase's pgBouncer** - Supabase uses pgBouncer for connection pooling, so the app doesn't duplicate this
+3. **Includes connect_args optimization**:
+   - `connect_timeout=10` - Better handling of temporary connection issues
+   - `application_name=finances-tracker` - Helps identify connections in database logs
+
+See `app/database.py` for implementation details.
 
 For app-specific issues:
 - Check `/docs` endpoint for API documentation
