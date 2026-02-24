@@ -1,0 +1,3 @@
+Supabase database password (backend for finances tracker project)
+j7QieCr&AhBJeeP
+postgresql://postgres:j7QieCr&AhBJeeP@db.uqzhxxyzzquaxsrfvman.supabase.co:5432/postgres
