@@ -1,0 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@400;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg-primary: #0F172A;
+  --color-bg-secondary: #1E293B;
+  --color-accent: #10B981;
+  --color-highlight: #14B8A6;
+  --color-text-primary: #E2E8F0;
+  --color-text-secondary: #94A3B8;
+}
+
+@layer base {
+  * {
+    @apply border-gray-200;
+  }
+  
+  html {
+    @apply bg-finance-bg text-finance-text-primary;
+  }
+  
+  body {
+    @apply bg-finance-bg text-finance-text-primary font-sans;
+    font-feature-settings: "cv03" 1, "cv04" 1, "cv11" 1;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold tracking-tight;
+  }
+  
+  h1 {
+    @apply text-4xl;
+  }
+  
+  h2 {
+    @apply text-3xl;
+  }
+  
+  h3 {
+    @apply text-2xl;
+  }
+}
+
+@layer base {
+  .dark {
+    * {
+      @apply border-gray-700;
+    }
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-finance-card rounded-xl shadow-lg transition-all duration-300 border border-gray-700/50 hover:border-finance-highlight/50 hover:shadow-xl hover:shadow-finance-accent/10;
+  }
+  
+  .btn-primary {
+    @apply bg-finance-accent hover:bg-finance-highlight text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg;
+  }
+  
+  .btn-secondary {
+    @apply bg-finance-card hover:bg-gray-700 text-finance-text-primary font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 border border-gray-700 hover:border-finance-highlight;
+  }
+  
+  .metric-card {
+    @apply card p-8 space-y-2;
+  }
+  
+  .metric-label {
+    @apply text-finance-text-secondary text-sm font-medium uppercase tracking-wide;
+  }
+  
+  .metric-value {
+    @apply text-3xl font-bold text-finance-text-primary;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
+  
+  .shimmer {
+    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+  
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  
+  .fade-in {
+    animation: fadeIn 0.5s ease-in;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .slide-in {
+    animation: slideIn 0.3s ease-out;
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .pulse-soft {
+    animation: pulseSoft 3s ease-in-out infinite;
+  }
+  
+  @keyframes pulseSoft {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+  }
+}
