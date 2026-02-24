@@ -75,6 +75,16 @@ def get_db():
 
 
 # ──────────────────────────────────────────────
+# Health check endpoint
+# ──────────────────────────────────────────────
+
+@app.get("/")
+def health_check():
+    """Health check endpoint for Render and deployment platforms."""
+    return {"status": "ok"}
+
+
+# ──────────────────────────────────────────────
 # Startup tasks
 # ──────────────────────────────────────────────
 

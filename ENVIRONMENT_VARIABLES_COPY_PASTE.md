@@ -19,7 +19,7 @@ HOST
 0.0.0.0
 
 FRONTEND_URL
-https://finances-tracker.vercel.app
+https://finances-tracker-fedpy2ss7-benhassners-projects.vercel.app/
 ```
 
 #### For Render PostgreSQL:
@@ -31,7 +31,7 @@ HOST
 0.0.0.0
 
 FRONTEND_URL
-https://finances-tracker.vercel.app
+https://finances-tracker-fedpy2ss7-benhassners-projects.vercel.app/
 ```
 
 ### Step-by-Step Instructions:
