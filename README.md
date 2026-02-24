@@ -53,12 +53,14 @@ pip install -r requirements.txt
 
 4. Start the server:
 ```bash
-uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+python ./run.py
 ```
+
+The backend will be available at `http://127.0.0.1:8000`
 
 ### Frontend Setup
 
-1. Open new terminal and navigate to frontend directory:
+1. Open a new terminal and navigate to frontend directory:
 ```bash
 cd frontend
 ```
@@ -74,6 +76,24 @@ npm run dev
 ```
 
 4. Open your browser to `http://localhost:5173` (or the port shown by Vite)
+
+### Running Both Simultaneously
+
+You'll want to run both the backend and frontend in separate terminal windows:
+
+**Terminal 1 (Backend):**
+```bash
+cd backend
+python ./run.py
+```
+
+**Terminal 2 (Frontend):**
+```bash
+cd frontend
+npm run dev
+```
+
+Then open `http://localhost:5173` in your browser to access the application.
 
 ## Usage
 
