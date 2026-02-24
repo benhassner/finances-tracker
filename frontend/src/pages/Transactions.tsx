@@ -41,7 +41,6 @@ const Transactions = () => {
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, transactionId: 0 })
-  const [alertEditModal, setAlertEditModal] = useState({ isOpen: false, category: '' })
   const [editData, setEditData] = useState<{ category: string; notes: string }>({ category: '', notes: '' })
   const [showAddForm, setShowAddForm] = useState(false)
   const [newTransaction, setNewTransaction] = useState({
@@ -118,8 +117,7 @@ const Transactions = () => {
     }
   }
 
-  const handleEditAlert = (category: string) => {
-    setAlertEditModal({ isOpen: true, category })
+  const handleEditAlert = () => {
     navigate('/alerts')
   }
 
@@ -288,7 +286,7 @@ const Transactions = () => {
                         </button>
                         {transaction.category && alerts.some(a => a.category === transaction.category) && (
                           <button
-                            onClick={() => handleEditAlert(transaction.category || '')}
+                            onClick={() => handleEditAlert()}
                             className="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300"
                             title="Edit alert for this category"
                           >
