@@ -9,6 +9,7 @@ from typing import List, Optional
 
 from fastapi import Depends, FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.routing import APIRouter
 from sqlalchemy.orm import Session
 
 from app import analytics, crud, models, rule_engine
@@ -55,6 +56,9 @@ app = FastAPI(
     version="1.0.0",
 )
 
+# API Router with /api prefix
+api_router = APIRouter(prefix="/api")
+
 # CORS middleware — restrict origins to localhost (dev) and deployed frontend (production)
 app.add_middleware(
     CORSMiddleware,
@@ -72,6 +76,10 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+# Include API router
+app.include_router(api_router)
 
 
 # ──────────────────────────────────────────────
@@ -182,19 +190,19 @@ def startup_event():
 # Category endpoints
 # ──────────────────────────────────────────────
 
-@app.get("/categories", response_model=List[CategoryOut])
+@api_router.get("/categories", response_model=List[CategoryOut])
 def list_categories(db: Session = Depends(get_db)):
     """List all categories."""
     return crud.get_categories(db)
 
 
-@app.post("/categories", response_model=CategoryOut)
+@api_router.post("/categories", response_model=CategoryOut)
 def create_category(payload: CategoryCreate, db: Session = Depends(get_db)):
     """Create a new category."""
     return crud.create_category(db, payload)
 
 
-@app.put("/categories/{category_id}", response_model=CategoryOut)
+@api_router.put("/categories/{category_id}", response_model=CategoryOut)
 def update_category(
     category_id: int, payload: CategoryUpdate, db: Session = Depends(get_db)
 ):
@@ -205,7 +213,7 @@ def update_category(
     return obj
 
 
-@app.delete("/categories/{category_id}")
+@api_router.delete("/categories/{category_id}")
 def delete_category(category_id: int, db: Session = Depends(get_db)):
     """Delete a category."""
     if not crud.delete_category(db, category_id):
@@ -217,7 +225,7 @@ def delete_category(category_id: int, db: Session = Depends(get_db)):
 # Transaction endpoints
 # ──────────────────────────────────────────────
 
-@app.get("/transactions", response_model=TransactionListResponse)
+@api_router.get("/transactions", response_model=TransactionListResponse)
 def list_transactions(
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=200),
@@ -237,7 +245,7 @@ def list_transactions(
     )
 
 
-@app.post("/transactions", response_model=TransactionOut)
+@api_router.post("/transactions", response_model=TransactionOut)
 def create_transaction_manually(payload: TransactionCreate, db: Session = Depends(get_db)):
     """Create a single transaction manually."""
     # Generate fingerprint if not provided
@@ -267,7 +275,7 @@ def create_transaction_manually(payload: TransactionCreate, db: Session = Depend
     return obj
 
 
-@app.put("/transactions/{transaction_id}", response_model=TransactionOut)
+@api_router.put("/transactions/{transaction_id}", response_model=TransactionOut)
 def update_transaction(
     transaction_id: int, payload: TransactionUpdate, db: Session = Depends(get_db)
 ):
@@ -278,7 +286,7 @@ def update_transaction(
     return obj
 
 
-@app.delete("/transactions/{transaction_id}")
+@api_router.delete("/transactions/{transaction_id}")
 def delete_transaction(transaction_id: int, db: Session = Depends(get_db)):
     """Delete a transaction."""
     if not crud.delete_transaction(db, transaction_id):
@@ -290,7 +298,7 @@ def delete_transaction(transaction_id: int, db: Session = Depends(get_db)):
 # CSV Import
 # ──────────────────────────────────────────────
 
-@app.post("/import", response_model=ImportResponse)
+@api_router.post("/import", response_model=ImportResponse)
 def import_csv(
     file: UploadFile = File(...),
     account_name: str = "Imported Account",
@@ -339,19 +347,19 @@ def import_csv(
 # Rule endpoints
 # ──────────────────────────────────────────────
 
-@app.get("/rules", response_model=List[RuleOut])
+@api_router.get("/rules", response_model=List[RuleOut])
 def list_rules(db: Session = Depends(get_db)):
     """List all categorization rules."""
     return crud.get_rules(db)
 
 
-@app.post("/rules", response_model=RuleOut)
+@api_router.post("/rules", response_model=RuleOut)
 def create_rule(payload: RuleCreate, db: Session = Depends(get_db)):
     """Create a new categorization rule."""
     return crud.create_rule(db, payload)
 
 
-@app.put("/rules/{rule_id}", response_model=RuleOut)
+@api_router.put("/rules/{rule_id}", response_model=RuleOut)
 def update_rule(rule_id: int, payload: RuleUpdate, db: Session = Depends(get_db)):
     """Update an existing rule."""
     obj = crud.update_rule(db, rule_id, payload)
@@ -360,7 +368,7 @@ def update_rule(rule_id: int, payload: RuleUpdate, db: Session = Depends(get_db)
     return obj
 
 
-@app.delete("/rules/{rule_id}")
+@api_router.delete("/rules/{rule_id}")
 def delete_rule(rule_id: int, db: Session = Depends(get_db)):
     """Delete a rule."""
     if not crud.delete_rule(db, rule_id):
@@ -372,19 +380,19 @@ def delete_rule(rule_id: int, db: Session = Depends(get_db)):
 # Spending Alerts
 # ──────────────────────────────────────────────
 
-@app.get("/alerts", response_model=List[SpendingAlertOut])
+@api_router.get("/alerts", response_model=List[SpendingAlertOut])
 def list_alerts(db: Session = Depends(get_db)):
     """List all spending alerts."""
     return crud.get_alerts(db)
 
 
-@app.post("/alerts", response_model=SpendingAlertOut)
+@api_router.post("/alerts", response_model=SpendingAlertOut)
 def create_alert(payload: SpendingAlertCreate, db: Session = Depends(get_db)):
     """Create or update a spending alert."""
     return crud.upsert_alert(db, payload)
 
 
-@app.put("/alerts/{alert_id}", response_model=SpendingAlertOut)
+@api_router.put("/alerts/{alert_id}", response_model=SpendingAlertOut)
 def update_alert(
     alert_id: int, payload: SpendingAlertUpdate, db: Session = Depends(get_db)
 ):
@@ -399,7 +407,7 @@ def update_alert(
     return obj
 
 
-@app.delete("/alerts/{alert_id}")
+@api_router.delete("/alerts/{alert_id}")
 def delete_alert(alert_id: int, db: Session = Depends(get_db)):
     """Delete an alert."""
     if not crud.delete_alert(db, alert_id):
@@ -411,13 +419,13 @@ def delete_alert(alert_id: int, db: Session = Depends(get_db)):
 # Jobs (Income entries)
 # ──────────────────────────────────────────────
 
-@app.get("/jobs", response_model=List[JobOut])
+@api_router.get("/jobs", response_model=List[JobOut])
 def list_jobs(db: Session = Depends(get_db)):
     """List all job entries."""
     return crud.get_jobs(db)
 
 
-@app.post("/jobs", response_model=JobOut)
+@api_router.post("/jobs", response_model=JobOut)
 def create_job(payload: JobCreate, db: Session = Depends(get_db)):
     """Create a new job entry."""
     obj = crud.create_job(db, payload)
@@ -427,7 +435,7 @@ def create_job(payload: JobCreate, db: Session = Depends(get_db)):
     return obj
 
 
-@app.put("/jobs/{job_id}", response_model=JobOut)
+@api_router.put("/jobs/{job_id}", response_model=JobOut)
 def update_job(job_id: int, payload: JobUpdate, db: Session = Depends(get_db)):
     """Update an existing job entry."""
     obj = crud.update_job(db, job_id, payload)
@@ -439,7 +447,7 @@ def update_job(job_id: int, payload: JobUpdate, db: Session = Depends(get_db)):
     return obj
 
 
-@app.delete("/jobs/{job_id}")
+@api_router.delete("/jobs/{job_id}")
 def delete_job(job_id: int, db: Session = Depends(get_db)):
     """Delete a job entry."""
     if not crud.delete_job(db, job_id):
@@ -454,19 +462,19 @@ def delete_job(job_id: int, db: Session = Depends(get_db)):
 # Analytics & Dashboard
 # ──────────────────────────────────────────────
 
-@app.get("/dashboard", response_model=DashboardSummary)
+@api_router.get("/dashboard", response_model=DashboardSummary)
 def get_dashboard(db: Session = Depends(get_db)):
     """Get dashboard summary with current month metrics."""
     return analytics.build_dashboard(db)
 
 
-@app.get("/subscriptions", response_model=List[SubscriptionItem])
+@api_router.get("/subscriptions", response_model=List[SubscriptionItem])
 def get_subscriptions(db: Session = Depends(get_db)):
     """Detect and list potential subscription charges."""
     return detect_subscriptions(db)
 
 
-@app.get("/projection", response_model=ProjectionResponse)
+@api_router.get("/projection", response_model=ProjectionResponse)
 def get_projection(
     initial_balance: float = Query(..., gt=0),
     monthly_contribution: float = Query(..., ge=0),
@@ -479,7 +487,7 @@ def get_projection(
     )
 
 
-@app.get("/monthly-summaries", response_model=List[MonthlySummaryOut])
+@api_router.get("/monthly-summaries", response_model=List[MonthlySummaryOut])
 def get_monthly_summaries(limit: int = Query(12, ge=1, le=120), db: Session = Depends(get_db)):
     """Get historical monthly summaries."""
     return crud.get_monthly_summaries(db, limit)
@@ -489,7 +497,7 @@ def get_monthly_summaries(limit: int = Query(12, ge=1, le=120), db: Session = De
 # ML Model Management
 # ──────────────────────────────────────────────
 
-@app.post("/retrain", response_model=RetrainResponse)
+@api_router.post("/retrain", response_model=RetrainResponse)
 def retrain_model(db: Session = Depends(get_db)):
     """Retrain the ML classifier on current categorized transactions."""
     success, samples, accuracy = retrain_from_db(db)
@@ -511,7 +519,7 @@ def retrain_model(db: Session = Depends(get_db)):
 # Health check
 # ──────────────────────────────────────────────
 
-@app.get("/health")
+@api_router.get("/health")
 def health_check():
     """Basic health check endpoint."""
     return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}

@@ -2,8 +2,8 @@ import axios from 'axios'
 
 // Use environment variable for base URL, default to Render backend in production
 const API_BASE_URL = import.meta.env.VITE_API_URL 
-  ? `${import.meta.env.VITE_API_URL}/api` 
-  : 'https://finances-tracker-75b0.onrender.com/api'
+  ? import.meta.env.VITE_API_URL 
+  : 'https://finances-tracker-75b0.onrender.com'
 
 const api = axios.create({
   baseURL: API_BASE_URL,

@@ -33,23 +33,8 @@ CLASSIFIER_PATH = MODEL_DIR / "classifier.joblib"
 MIN_TRAINING_SAMPLES = 30
 
 # CORS configuration
-# Allow localhost in development
-# Allow deployed frontend URL in production via FRONTEND_URL env var
-_default_origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    # Vercel production frontend
-    "https://finances-tracker-20d3dww45-benhassners-projects.vercel.app",
-]
-
-# Add FRONTEND_URL from environment variable if set
-_frontend_url = os.getenv("FRONTEND_URL")
-if _frontend_url and _frontend_url not in _default_origins:
-    _default_origins.append(_frontend_url)
-
-ALLOWED_ORIGINS = _default_origins
+# TEMPORARILY allow all origins for debugging - restrict later
+ALLOWED_ORIGINS = ["*"]
 
 # Subscription detection thresholds
 SUBSCRIPTION_MIN_OCCURRENCES = 2          # minimum repeats to flag
