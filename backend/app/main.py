@@ -150,28 +150,28 @@ def startup_event():
                 crud.upsert_alert(db, SpendingAlertCreate(category=cat.name, monthly_limit=cat.budget_limit, is_active=True))
 
         # Seed sample transactions if database is empty
-        existing_txns = db.query(models.Transaction).first()
-        if not existing_txns:
-            from app.models import Transaction
-            sample_transactions = [
-                Transaction(date=datetime(2026, 2, 1), description="Salary Deposit", amount=3500.00, transaction_type="credit", account_name="Checking", category="Income", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-01|salary deposit|3500.00|checking").hexdigest(), notes="Monthly salary"),
-                Transaction(date=datetime(2026, 2, 2), description="Whole Foods Market", amount=125.50, transaction_type="debit", account_name="Checking", category="Groceries", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-02|whole foods market|125.50|checking").hexdigest()),
-                Transaction(date=datetime(2026, 2, 3), description="Starbucks Coffee", amount=5.75, transaction_type="debit", account_name="Checking", category="Dining Out", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-03|starbucks coffee|5.75|checking").hexdigest()),
-                Transaction(date=datetime(2026, 2, 4), description="Netflix Subscription", amount=15.99, transaction_type="debit", account_name="Checking", category="Subscriptions", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-04|netflix subscription|15.99|checking").hexdigest()),
-                Transaction(date=datetime(2026, 2, 5), description="Shell Gas Station", amount=45.00, transaction_type="debit", account_name="Checking", category="Gas & Fuel", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-05|shell gas station|45.00|checking").hexdigest()),
-                Transaction(date=datetime(2026, 2, 6), description="Rent Payment", amount=1500.00, transaction_type="debit", account_name="Checking", category="Rent & Housing", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-06|rent payment|1500.00|checking").hexdigest()),
-                Transaction(date=datetime(2026, 2, 8), description="Trader Joe's", amount=85.30, transaction_type="debit", account_name="Checking", category="Groceries", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-08|trader joe's|85.30|checking").hexdigest()),
-                Transaction(date=datetime(2026, 2, 10), description="Chipotle", amount=12.45, transaction_type="debit", account_name="Checking", category="Dining Out", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-10|chipotle|12.45|checking").hexdigest()),
-                Transaction(date=datetime(2026, 2, 12), description="Spotify Premium", amount=11.99, transaction_type="debit", account_name="Checking", category="Subscriptions", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-12|spotify premium|11.99|checking").hexdigest()),
-                Transaction(date=datetime(2026, 2, 14), description="Electric Bill", amount=120.00, transaction_type="debit", account_name="Checking", category="Utilities", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-14|electric bill|120.00|checking").hexdigest()),
-                Transaction(date=datetime(2026, 2, 15), description="Doctor Visit", amount=200.00, transaction_type="debit", account_name="Checking", category="Healthcare", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-15|doctor visit|200.00|checking").hexdigest()),
-                Transaction(date=datetime(2026, 2, 16), description="Target Shopping", amount=65.20, transaction_type="debit", account_name="Checking", category="Shopping", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-16|target shopping|65.20|checking").hexdigest()),
-                Transaction(date=datetime(2026, 2, 18), description="Movie Tickets", amount=28.00, transaction_type="debit", account_name="Checking", category="Entertainment", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-18|movie tickets|28.00|checking").hexdigest()),
-            ]
-            for txn in sample_transactions:
-                db.add(txn)
-            db.commit()
-            logger.info("Sample transactions seeded.")
+        # existing_txns = db.query(models.Transaction).first()
+        # if not existing_txns:
+        #     from app.models import Transaction
+        #     sample_transactions = [
+        #         Transaction(date=datetime(2026, 2, 1), description="Salary Deposit", amount=3500.00, transaction_type="credit", account_name="Checking", category="Income", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-01|salary deposit|3500.00|checking").hexdigest(), notes="Monthly salary"),
+        #         Transaction(date=datetime(2026, 2, 2), description="Whole Foods Market", amount=125.50, transaction_type="debit", account_name="Checking", category="Groceries", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-02|whole foods market|125.50|checking").hexdigest()),
+        #         Transaction(date=datetime(2026, 2, 3), description="Starbucks Coffee", amount=5.75, transaction_type="debit", account_name="Checking", category="Dining Out", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-03|starbucks coffee|5.75|checking").hexdigest()),
+        #         Transaction(date=datetime(2026, 2, 4), description="Netflix Subscription", amount=15.99, transaction_type="debit", account_name="Checking", category="Subscriptions", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-04|netflix subscription|15.99|checking").hexdigest()),
+        #         Transaction(date=datetime(2026, 2, 5), description="Shell Gas Station", amount=45.00, transaction_type="debit", account_name="Checking", category="Gas & Fuel", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-05|shell gas station|45.00|checking").hexdigest()),
+        #         Transaction(date=datetime(2026, 2, 6), description="Rent Payment", amount=1500.00, transaction_type="debit", account_name="Checking", category="Rent & Housing", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-06|rent payment|1500.00|checking").hexdigest()),
+        #         Transaction(date=datetime(2026, 2, 8), description="Trader Joe's", amount=85.30, transaction_type="debit", account_name="Checking", category="Groceries", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-08|trader joe's|85.30|checking").hexdigest()),
+        #         Transaction(date=datetime(2026, 2, 10), description="Chipotle", amount=12.45, transaction_type="debit", account_name="Checking", category="Dining Out", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-10|chipotle|12.45|checking").hexdigest()),
+        #         Transaction(date=datetime(2026, 2, 12), description="Spotify Premium", amount=11.99, transaction_type="debit", account_name="Checking", category="Subscriptions", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-12|spotify premium|11.99|checking").hexdigest()),
+        #         Transaction(date=datetime(2026, 2, 14), description="Electric Bill", amount=120.00, transaction_type="debit", account_name="Checking", category="Utilities", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-14|electric bill|120.00|checking").hexdigest()),
+        #         Transaction(date=datetime(2026, 2, 15), description="Doctor Visit", amount=200.00, transaction_type="debit", account_name="Checking", category="Healthcare", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-15|doctor visit|200.00|checking").hexdigest()),
+        #         Transaction(date=datetime(2026, 2, 16), description="Target Shopping", amount=65.20, transaction_type="debit", account_name="Checking", category="Shopping", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-16|target shopping|65.20|checking").hexdigest()),
+        #         Transaction(date=datetime(2026, 2, 18), description="Movie Tickets", amount=28.00, transaction_type="debit", account_name="Checking", category="Entertainment", categorization_method="rule", fingerprint=hashlib.sha256(b"2026-02-18|movie tickets|28.00|checking").hexdigest()),
+        #     ]
+        #     for txn in sample_transactions:
+        #         db.add(txn)
+        #     db.commit()
+        #     logger.info("Sample transactions seeded.")
 
         # Create monthly summary for current month
         now = datetime.utcnow()

@@ -141,16 +141,16 @@ const Dashboard = () => {
           <h3 className="text-xl font-display font-bold text-finance-text-primary mb-6">Monthly Trends</h3>
           <div className="flex justify-center">
             <ResponsiveContainer width="100%" height={400}>
-              <ComposedChart data={data.monthly_trends}>
+              <ComposedChart data={data.monthly_trends.map(mt => ({ ...mt, expenses: -Math.abs(mt.expenses) }))}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.2)" />
                 <XAxis dataKey="label" stroke="#94A3B8" />
                 <YAxis stroke="#94A3B8" />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#1E293B', border: '1px solid rgba(148, 163, 184, 0.3)', borderRadius: '8px' }}
-                  formatter={(value: number, name: string) => [`$${value.toFixed(2)}`, name]}
+                  formatter={(value: number, name: string) => [`$${Math.abs(value).toFixed(2)}`, name]}
                 />
                 <Line type="monotone" dataKey="income" stroke="#10b981" strokeOpacity={0.6} strokeWidth={2} dot={{ fill: '#10b981', r: 3 }} />
-                <Line type="monotone" dataKey="expenses" stroke="#ef4444" strokeOpacity={0.6} strokeWidth={2} dot={{ fill: '#ef4444', r: 3 }} />
+                <Line type="monotone" dataKey="expenses" stroke="#ef4444" strokeOpacity={0.6} strokeWidth={2} dot={{ fill: '#ef4444', r: 3 }} name="Expenses" />
                 <Area type="monotone" dataKey="net" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.3} strokeWidth={2} />
               </ComposedChart>
             </ResponsiveContainer>
