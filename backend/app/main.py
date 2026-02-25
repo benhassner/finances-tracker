@@ -78,10 +78,6 @@ def get_db():
         db.close()
 
 
-# Include API router
-app.include_router(api_router)
-
-
 # ──────────────────────────────────────────────
 # Health check endpoint
 # ──────────────────────────────────────────────
@@ -523,3 +519,7 @@ def retrain_model(db: Session = Depends(get_db)):
 def health_check():
     """Basic health check endpoint."""
     return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
+
+
+# Include API router
+app.include_router(api_router)
